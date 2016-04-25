@@ -31,3 +31,11 @@ This module sends HTTP requests to other relays. It acts as a threadpool so that
 ### Client
 
 The client simply sends requests to localhost, and provides a friendlier interface to the Puddle API. The server will only accept client connections from localhost, thus providing a modicum of authentication.
+
+## Dependencies
+
+[Sinatra](http://www.sinatrarb.com/), for receiving http requests
+
+[Patron](https://github.com/toland/patron), for sending http requests to other neighbors
+
+All other dependencies should be in the Ruby core libraries.
