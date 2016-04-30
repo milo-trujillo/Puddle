@@ -22,9 +22,13 @@ module Storage
 			return arr
 		end
 		else # if the tag conditions aren't met
-			return nil
+			return []
 		end
 	end
 
 
 end
+
+list = Storage.findfiles('foo')
+
+
