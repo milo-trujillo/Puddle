@@ -19,14 +19,23 @@ module Log
 	def self.log(type, message)
 		t = Time.new
 		timestamp = "[#{t.month}/#{t.day} #{t.hour}:#{t.min}:#{t.sec}]"
-		f = File.open(Configuration::LogFile, "w+")
+		f = File.open(Configuration::LogFile, "a")
 		f.flock(File::LOCK_EX)
-		f.puts(timestamp + " #{type}: #{message}")
+		f.printf("%-16s %-10s: %s\n", timestamp, type, message)
 		f.close
 	end
 	
 	def self.read
 		return File.read(Configuration::LogFile)
+	end
+
+	def self.read_backwards
+		data = File.read(Configuration::LogFile)
+		log = ""
+		data.lines.reverse_each do |line|
+			log += line
+		end
+		return log
 	end
 
 	def self.uptime
