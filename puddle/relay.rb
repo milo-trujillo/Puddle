@@ -11,6 +11,7 @@ require_relative "log"
 
 set :bind => "0.0.0.0"
 set :port => Configuration::Port
+Thread.abort_on_exception = true
 
 Log.init
 Signal.init
