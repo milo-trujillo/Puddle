@@ -7,11 +7,12 @@
 require_relative 'storage'
 require_relative 'signal'
 require_relative 'configuration'
+require_relative 'log'
 
-get '/relay/:ttlOrig/:ttlCurrent/:request' do |orig_ttl, current_ttl, request|
-
+get '/relay/:ttlOrig/:ttlCurrent/:topic' do |orig_ttl, current_ttl, topic|
+	Log.log("Relay", "Received a topic request on #{topic} from #{request.ip}")
 end
 
-post '/relay/:ttl/:request' do |ttl, request|
-
+post '/relay/:ttl/:topic' do |ttl, topic|
+	Log.log("Relay", "Received data response on #{topic} from #{request.ip}")
 end
