@@ -5,6 +5,7 @@ module Configuration
 
 	# For network configuration
 	Port = 7924 # Swag
+	NetThreads = 3 # How many threads should idle waiting to send data
 
 	# For the logging system
 	LogFile = PrivateFolder + "/log.txt"
