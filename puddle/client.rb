@@ -1,6 +1,7 @@
 require_relative "configuration"
 require_relative "log"
 require_relative "signal"
+require_relative "storage"
 
 =begin
 	This file is responsible for generating the UI every human
@@ -31,17 +32,17 @@ get '/client/about' do
 end
 
 get '/client/shared' do
-	files = ["illuminati.pdf"]
+	files = Storage.listDataFiles
 	erb :shared, :locals => {:sharedDir => Configuration::DataDir, :files => files}
 end
 
 get '/client/downloads' do
-	files = ["illuminati-song.mp3", "illuminati-proof.jpg"]
+	files = Storage.listDownloadsFiles
 	erb :downloads, :locals => {:files => files}
 end
 
 get '/client/cache' do
-	files = ["mcdonalds-menu.pdf", "SICP.pdf", "sheeple.png"]
+	files = Storage.listCacheFiles
 	erb :cache, :locals => {:files => files}
 end
 

@@ -31,12 +31,13 @@ class DataRequest < Request
 	end
 end
 
-# A data response needs a data blob in addition to the request
+# A data response needs a data blob and filename in addition to the request
 class DataResponse < Request
-	attr_reader :data
+	attr_reader :data, :filename
 
-	def initialize(request, data, ttl)
+	def initialize(request, filename, data, ttl)
 		@request = request
+		@filename = filename
 		@data = data
 		@current_ttl = ttl
 	end
@@ -80,9 +81,11 @@ module Signal
 		Log.log("Signal", "Forwarding request for #{req}")
 	end
 
-	def self.forwardResponse(req, data, ttl)
-		@@toSend << DataResponse.new(Base64.encode64(req), data, ttl-1)
-		Log.log("Signal", "Forwarding response for #{req}")
+	def self.forwardResponse(topic, filename, data, ttl)
+		eTopic = Base64.encode64(topic)
+		eName = Base64.encode64(filename)
+		@@toSend << DataResponse.new(eTopic, eName, data, ttl-1)
+		Log.log("Signal", "Forwarding response for #{topic} with file #{filename}")
 	end
 
 	# Returns every request we're currently accepting responses for
