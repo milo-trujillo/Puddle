@@ -9,6 +9,9 @@
 	<input type="submit" value="Request">
 </form>
 
-<h3>Current requests:</h3>
-
-List goes here...
+<table width=400>
+	<tr><th>Active Requests</th></tr>
+	<% requests.each do |request| %>
+	<tr><td><%= request %></td></tr>
+	<% end %>
+</table>

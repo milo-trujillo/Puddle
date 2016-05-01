@@ -2,6 +2,9 @@
 
 Caching from other network requests is taking 500 million terrabytes.
 
-<h3>File list</h3>
-
-List goes here...
+<table width=400>
+	<tr><th>Cached Files</th></tr>
+	<% files.each do |file| %>
+	<tr><td><%= file %></td></tr>
+	<% end %>
+</table>

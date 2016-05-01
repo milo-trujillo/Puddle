@@ -8,6 +8,9 @@
 	<input type="submit" value="Rescan">
 </form>
 
-<h3>File list</h3>
-
-List goes here...
+<table width=400>
+	<tr><th>Shared Files</th></tr>
+	<% files.each do |file| %>
+	<tr><td><%= file %></td></tr>
+	<% end %>
+</table>
