@@ -1,3 +1,7 @@
+=begin
+	This module stores global configuration for the entire program.
+=end
+
 module Configuration
 	Base = File.dirname(__FILE__)
 	PrivateFolder = Base + "/private"
