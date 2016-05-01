@@ -69,7 +69,7 @@ body {
 	backface-visibility: hidden;
 	-moz-osx-font-smoothing: grayscale;
 	*/
-	position: relative;
+	/*position: relative;*/
 }
 
 .navlink a:link {
@@ -106,4 +106,36 @@ body {
 .stage_data {
 	margin-left: 10px;
 	margin-right: 10px;
+}
+
+table {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+}
+
+th {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+th {
+	background: #CCC;
+}
+
+tr:nth-child(even) {
+	background: #F0F0F0;
+}
+
+tr:nth-child(odd) {
+	background: #FFF;
+}
+
+td {
+	padding-left: 5px;
+	padding-right: 5px;
 }
