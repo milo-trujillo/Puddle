@@ -1,0 +1,12 @@
+<h2>Sharing Files</h2>
+
+<p>You are sharing 500 million terrabytes of data.</p>
+
+<p>To add more files, place them in the <%= sharedDir %> folder.</p>
+
+<table width=400>
+	<tr><th>Shared Files</th></tr>
+	<% files.each do |file| %>
+	<tr><td><%= file %></td></tr>
+	<% end %>
+</table>
