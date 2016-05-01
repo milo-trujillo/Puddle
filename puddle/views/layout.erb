@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Puddle</title>
+<link href="/styles/main.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div class="container">
+		<div class="header">
+			<center class="header_title">Puddle Console</center>
+			<hr>
+			<div class="header_nav">
+				<ul class="navlinks">
+					<li class="navlink"><a href=".">Console</a></li>
+					<li class="navlink"><a href="about">About</a></li>
+					<li class="navlink"><a href="shared">Shared</a></li>
+					<li class="navlink"><a href="downloads">Downloaded</a></li>
+					<li class="navlink"><a href="cache">Cache</a></li>
+					<li class="navlink"><a href="log">Log</a></li>
+				</ul>
+			</div>
+		</div>
+	
+		<div class="stage">
+			<div class="stage_data">
+				<%= yield %>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
