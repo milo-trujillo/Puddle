@@ -8,6 +8,7 @@ require_relative "signal"
 require_relative "storage"
 require_relative "client"
 require_relative "relay"
+require_relative "peer"
 require_relative "log"
 
 set :bind => "0.0.0.0"
