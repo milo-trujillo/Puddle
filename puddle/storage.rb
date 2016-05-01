@@ -19,6 +19,13 @@ require_relative "configuration"
 	listDownloadsFiles()
 		returns:
 			an array of all file names in the cache directory
+	
+	storeFile(filename, data)
+		arguments:
+			filename - the name of the file to be saved
+			data - the contents of the file to be saved
+		returns:
+			true if the file was saved, false otherwise
 
 =end
 
@@ -34,11 +41,13 @@ module Storage
 			Dir.glob(Configuration::DataDir + '/*' + tag + '*') do |myfile|
 				# this should create an array of all the files that contain the tag requested
 				str = myfile
+				str = str.sub(Configuration::DataDir + '/', '')
 				arr.push str 
 			end
 			Dir.glob(Configuration::CacheDir + '/*' + tag + '*') do |myfile|
 				# this should create an array of all the files that contain the tag requested
 				str = myfile
+				str = str.sub(Configuration::CacheDir + '/', '')
 				arr.push str 
 			end
 			return arr
@@ -59,6 +68,7 @@ module Storage
 				end
 				# append filenames to the array
 				str = myfile
+				str = str.sub(Configuration::CacheDir + '/', '')
 				arr.push str
 			end
 			# return the array
@@ -76,6 +86,7 @@ module Storage
 				end
 				# append filenames to the array
 				str = myfile
+				str = str.sub(Configuration::DataDir + '/', '')
 				arr.push str
 			end
 			# return the array
@@ -93,12 +104,25 @@ module Storage
 				end
 				# append filenames to the array
 				str = myfile
+				str = str.sub(Configuration::DownloadsDir + '/', '')
 				arr.push str
 			end
 			# return the array
 			return arr
 	end
 
+	def self.storeFile(filename, data)
+		if(data == nil or filename == '')
+			return false
+		end
+		File.write(filename, data)
+		return true
+	end
 
 end
 
+
+list = Storage.listDataFiles()
+list.each do |x|
+	puts x
+end
