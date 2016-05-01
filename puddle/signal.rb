@@ -23,7 +23,7 @@ end
 # to reach us.
 class DataRequest < Request
 	attr_reader :orig_ttl
-	def init(req, orig_ttl, current_ttl)
+	def initialize(req, orig_ttl, current_ttl)
 		@type = :get
 		@request = req
 		@orig_ttl = orig_ttl
@@ -35,7 +35,7 @@ end
 class DataResponse < Request
 	attr_reader :data
 
-	def init(request, data, ttl)
+	def initialize(request, data, ttl)
 		@request = request
 		@data = data
 		@current_ttl = ttl
@@ -48,17 +48,19 @@ module Signal
 	@@peers = Array.new
 	@@peerLock = Mutex.new
 
-	def sendData
-		while( true )
+	private_class_method def self.sendData()
+		Log.log("Signal", "Started message transmission thread.")
+		while( true ) do
 			msg = @@toSend.pop
-			Log.log("Signal", "Would have sent request: #{msg.request}")
+			Log.log("Signal", "Would have sent request: #{Base64.decode64(msg.request)}")
 		end
+		Log.log("Signal", "WARNING: Thread is exiting, should not happen!")
 	end
 	
 	def self.init
 		(0 .. Configuration::NetThreads - 1).each do
 			Thread.new do
-				sendData
+				sendData()
 			end
 		end
 
@@ -67,7 +69,7 @@ module Signal
 
 	# Adds a new request for information if we haven't already requested it
 	def self.addRequest(req)
-		if( @@requests.add?(req) == nil )
+		if( @@requests.add?(req) != nil )
 			@@toSend << DataRequest.new(Base64.encode64(req), 1, 1)
 		end
 		Log.log("Signal", "Added request for #{req}")
