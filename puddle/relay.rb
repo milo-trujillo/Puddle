@@ -25,9 +25,9 @@ end
 
 # TODO: Validate ttl, topic, filename, and data
 # Make sure data isn't too rediculously large
-post '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
+put '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
 	Log.log("Relay", "Received data response on #{topic} from #{request.ip}")
-	data = params['data']
+	data = request.body.read # Fancy schmancy way of reading PUT request
 	Signal.forwardResponse(topic, filename, data, ttl)
 	if( Signal.isActiveRequest?(topic) )
 		Storage.storeFile(filename, data)
