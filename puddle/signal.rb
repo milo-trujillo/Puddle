@@ -44,15 +44,22 @@ class DataResponse < Request
 end
 
 module Signal
-	@@toSend = Queue.new
+	@@toSend = Queue.new ## Must be threadsafe
 	@@requests = Set.new
-	@@peers = Array.new
+	@@peers = Set.new
 	@@peerLock = Mutex.new
 
 	private_class_method def self.sendData()
 		Log.log("Signal", "Started message transmission thread.")
 		while( true ) do
 			msg = @@toSend.pop
+			peers = nil
+			@@peerLock.synchronize do
+				peers = @@peers.dup
+			end
+			for peer in peers do
+				# TODO: Send to each peer here
+			end
 			Log.log("Signal", "Would have sent request: #{Base64.decode64(msg.request)}")
 		end
 		Log.log("Signal", "WARNING: Thread is exiting, should not happen!")
@@ -94,6 +101,18 @@ module Signal
 		eName = Base64.encode64(filename)
 		@@toSend << DataResponse.new(eTopic, eName, data, ttl-1)
 		Log.log("Signal", "Forwarding response for #{topic} with file #{filename}")
+	end
+
+	def self.addPeer(address)
+		@@peerLock.synchronize do
+			@@peers.add?(address)
+		end
+	end
+
+	def self.dropPeer(address)
+		@@peerLock.synchronize do
+			@@peers.delete?(address)
+		end
 	end
 
 	# Returns every request we're currently accepting responses for
