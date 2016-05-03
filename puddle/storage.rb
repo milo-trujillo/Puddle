@@ -112,17 +112,11 @@ module Storage
 	end
 
 	def self.storeFile(filename, data)
-		if(data == nil or filename == '')
+		if(data == nil or filename == nil || data.size == 0 || filename.size == 0)
 			return false
 		end
-		File.write(filename, data)
+		File.write(Configuration::DownloadsDir + "/" + filename, data)
 		return true
 	end
 
-end
-
-
-list = Storage.listDataFiles()
-list.each do |x|
-	puts x
 end
