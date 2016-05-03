@@ -119,12 +119,14 @@ module Signal
 		@@peerLock.synchronize do
 			@@peers.add?(address)
 		end
+		Log.log("Signal", "Added peer #{address}")
 	end
 
 	def self.dropPeer(address)
 		@@peerLock.synchronize do
 			@@peers.delete?(address)
 		end
+		Log.log("Signal", "Dropped peer #{address}")
 	end
 
 	# Returns every request we're currently accepting responses for
