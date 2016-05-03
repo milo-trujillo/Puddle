@@ -30,6 +30,7 @@ class DataResponse < Request
 
 	def initialize(request, filename, data, ttl)
 		@request = request
+		@type = :post
 		@filename = filename
 		@data = data
 		@current_ttl = ttl
@@ -42,6 +43,24 @@ module Signal
 	@@peers = Set.new
 	@@peerLock = Mutex.new
 
+	# Sets up a timeout, executes a single request to a single host
+	private_class_method def self.sendRequest(peer, req)
+		if( req.type != :get and req.type != :post )
+			Log.log("Signal", "Error! Invalid request type #{req.type}!")
+			return
+		end
+		sess = Patron::Session.new
+		sess.timeout = Configuration::TimeOut
+		sess.base_url = "http://#{peer}:#{Configuration::Port}"
+		sess.headers['User-Agent'] = Configuration::Agent
+		if( req.type == :get )
+			sess.get("/relay/#{req.orig_ttl}/#{req.current_ttl}/#{req.request}")
+		elsif( req.type == :post )
+			url = "/relay/#{req.current_ttl}/#{req.request}/#{req.filename}"
+			sess.put(url, req.data)
+		end
+	end
+
 	private_class_method def self.sendData()
 		Log.log("Signal", "Started message transmission thread.")
 		while( true ) do
@@ -51,9 +70,9 @@ module Signal
 				peers = @@peers.dup
 			end
 			for peer in peers do
-				# TODO: Send to each peer here
+				sendRequest(peer, msg)
 			end
-			Log.log("Signal", "Would have sent request: #{Base64.decode64(msg.request)}")
+			Log.log("Signal", "Sent request: #{Base64.decode64(msg.request)}")
 		end
 		Log.log("Signal", "WARNING: Thread is exiting, should not happen!")
 	end
