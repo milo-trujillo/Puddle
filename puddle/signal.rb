@@ -10,13 +10,6 @@ require_relative 'log'
 # information, and 'post' is for sending responses with important data
 class Request
 	attr_reader :type, :request, :current_ttl
-=begin
-	def initialize(type, request, current_ttl)
-		@type = type
-		@request = request
-		@current_ttl = current_ttl
-	end
-=end
 end
 
 # Requests need to have a "response" ttl so nodes know how
