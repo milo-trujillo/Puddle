@@ -23,3 +23,10 @@ Signal.init
 get '/' do
 	redirect to('/client/')
 end
+
+if( ARGV.length != 0 )
+	Log.log("Core", "Adding #{ARGV.length} peers")
+	for peer in ARGV
+		Signal.addPeer(peer)
+	end
+end
