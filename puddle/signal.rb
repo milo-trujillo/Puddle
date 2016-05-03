@@ -77,11 +77,19 @@ module Signal
 	end
 
 	def self.forwardRequest(req, orig_ttl, current_ttl)
+		if( current_ttl <= 1 )
+			Log.log("Signal", "Dropping request for #{req}")
+			return
+		end
 		@@toSend << DataRequest.new(Base64.encode64(req), orig_ttl, current_ttl - 1)
 		Log.log("Signal", "Forwarding request for #{req}")
 	end
 
 	def self.forwardResponse(topic, filename, data, ttl)
+		if( ttl <= 1 )
+			Log.log("Signal", "Dropping response for #{topic} with file #{filename}")
+			return
+		end
 		eTopic = Base64.encode64(topic)
 		eName = Base64.encode64(filename)
 		@@toSend << DataResponse.new(eTopic, eName, data, ttl-1)
@@ -91,5 +99,10 @@ module Signal
 	# Returns every request we're currently accepting responses for
 	def self.activeRequests()
 		return @@requests.to_a
+	end
+
+	# Returns whether a particular topic is actively being requested
+	def self.isActiveRequest?(topic)
+		return @@requests.include?(topic)
 	end
 end
