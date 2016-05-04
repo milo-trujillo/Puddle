@@ -103,7 +103,7 @@ module Signal
 			Log.log("Signal", "Dropping request for #{req}")
 			return
 		end
-		@@toSend << DataRequest.new(Base64.encode64(req), orig_ttl, current_ttl - 1)
+		@@toSend << DataRequest.new(Base64.encode64(req), orig_ttl.to_i, current_ttl.to_i - 1)
 		Log.log("Signal", "Forwarding request for #{req}")
 	end
 
@@ -114,7 +114,7 @@ module Signal
 		end
 		eTopic = Base64.encode64(topic)
 		eName = Base64.encode64(filename)
-		@@toSend << DataResponse.new(eTopic, eName, data, ttl-1)
+		@@toSend << DataResponse.new(eTopic, eName, data, ttl.to_i-1)
 		Log.log("Signal", "Forwarding response for #{topic} with file #{filename}")
 	end
 
