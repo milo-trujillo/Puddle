@@ -92,7 +92,8 @@ module Signal
 	# Adds a new request for information if we haven't already requested it
 	def self.addRequest(req)
 		if( @@requests.add?(req) != nil )
-			@@toSend << DataRequest.new(Base64.encode64(req), 1, 1)
+			# TODO: CHANGE THE TTLS BELOW TO ADD ANONYMITY
+			@@toSend << DataRequest.new(Base64.encode64(req), 10, 10)
 		end
 		Log.log("Signal", "Added request for #{req}")
 	end
