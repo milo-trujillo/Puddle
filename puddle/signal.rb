@@ -55,11 +55,15 @@ module Signal
 		sess.base_url = "http://#{peer}:#{Configuration::Port}"
 		sess.headers['User-Agent'] = Configuration::Agent
 		request = CGI.escape(req.request)
-		if( req.type == :get )
-			sess.get("/relay/#{req.orig_ttl}/#{req.current_ttl}/#{request}")
-		elsif( req.type == :post )
-			url = "/relay/#{req.current_ttl}/#{request}/#{req.filename}"
-			sess.put(url, req.data)
+		begin
+			if( req.type == :get )
+				sess.get("/relay/#{req.orig_ttl}/#{req.current_ttl}/#{request}")
+			elsif( req.type == :post )
+				url = "/relay/#{req.current_ttl}/#{request}/#{req.filename}"
+				sess.put(url, req.data)
+			end
+		rescue
+			# This is normal since the other end drops our connections
 		end
 	end
 
