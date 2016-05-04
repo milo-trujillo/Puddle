@@ -41,13 +41,11 @@ module Storage
 			Dir.glob(Configuration::DataDir + '/*' + tag + '*') do |myfile|
 				# this should create an array of all the files that contain the tag requested
 				str = myfile
-				str = str.sub(Configuration::DataDir + '/', '')
 				arr.push str 
 			end
 			Dir.glob(Configuration::CacheDir + '/*' + tag + '*') do |myfile|
 				# this should create an array of all the files that contain the tag requested
 				str = myfile
-				str = str.sub(Configuration::CacheDir + '/', '')
 				arr.push str 
 			end
 			return arr
@@ -116,6 +114,14 @@ module Storage
 			return false
 		end
 		File.write(Configuration::DownloadsDir + "/" + filename, data)
+		return true
+	end
+
+	def self.cacheFile(filename, data)
+		if(data == nil or filename == nil || data.size == 0 || filename.size == 0)
+			return false
+		end
+		File.write(Configuration::CacheDir + "/" + filename, data)
 		return true
 	end
 
