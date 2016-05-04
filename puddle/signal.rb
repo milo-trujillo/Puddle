@@ -98,7 +98,7 @@ module Signal
 	end
 
 	def self.forwardRequest(req, orig_ttl, current_ttl)
-		if( current_ttl <= 1 )
+		if( current_ttl.to_i <= 1 )
 			Log.log("Signal", "Dropping request for #{req}")
 			return
 		end
@@ -107,7 +107,7 @@ module Signal
 	end
 
 	def self.forwardResponse(topic, filename, data, ttl)
-		if( ttl <= 1 )
+		if( ttl.to_i <= 1 )
 			Log.log("Signal", "Dropping response for #{topic} with file #{filename}")
 			return
 		end
