@@ -14,6 +14,8 @@ require_relative "log"
 
 set :bind => "0.0.0.0"
 set :port => Configuration::Port
+# Allow users to upload files in PUT or POST
+Rack::Utils.key_space_limit = 123456789 
 Thread.abort_on_exception = true
 
 State.init
