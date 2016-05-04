@@ -97,7 +97,7 @@ module Signal
 	def self.addRequest(req)
 		if( @@requests.add?(req) != nil )
 			# TODO: CHANGE THE TTLS BELOW TO ADD ANONYMITY
-			@@toSend << DataRequest.new(Base64.encode64(req), 10, 10)
+			@@toSend << DataRequest.new(Base64.encode64(req), 5, 5)
 		end
 		Log.log("Signal", "Added request for #{req}")
 	end
