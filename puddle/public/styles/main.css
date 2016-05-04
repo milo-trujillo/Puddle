@@ -119,6 +119,7 @@ table, th, td {
 }
 
 .log {
+	height: 100%;
 	overflow: auto;
 }
 
