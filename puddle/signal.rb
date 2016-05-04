@@ -31,7 +31,7 @@ class DataResponse < Request
 
 	def initialize(request, filename, data, ttl)
 		@request = request
-		@type = :post
+		@type = :put
 		@filename = filename
 		@data = data
 		@current_ttl = ttl
@@ -46,7 +46,7 @@ module Signal
 
 	# Sets up a timeout, executes a single request to a single host
 	private_class_method def self.sendRequest(peer, req)
-		if( req.type != :get and req.type != :post )
+		if( req.type != :get and req.type != :put )
 			Log.log("Signal", "Error! Invalid request type #{req.type}!")
 			return
 		end
@@ -54,16 +54,19 @@ module Signal
 		sess.timeout = Configuration::TimeOut
 		sess.base_url = "http://#{peer}:#{Configuration::Port}"
 		sess.headers['User-Agent'] = Configuration::Agent
-		request = CGI.escape(req.request)
+		request = CGI.escape(Base64.encode64(req.request))
 		begin
 			if( req.type == :get )
 				sess.get("/relay/#{req.orig_ttl}/#{req.current_ttl}/#{request}")
-			elsif( req.type == :post )
-				url = "/relay/#{req.current_ttl}/#{request}/#{req.filename}"
-				sess.put(url, req.data)
+			elsif( req.type == :put )
+				filename = CGI.escape(Base64.encode64(req.filename))
+				data = CGI.escape(Base64.encode64(req.data))
+				url = "/relay/#{req.current_ttl}/#{request}/#{filename}"
+				sess.put(url, data)
 			end
-		rescue
+		rescue => e
 			# This is normal since the other end drops our connections
+			Log.log("Signal", "Error during message transmit: #{e.message}")
 		end
 	end
 
@@ -78,7 +81,7 @@ module Signal
 			for peer in peers do
 				sendRequest(peer, msg)
 			end
-			Log.log("Signal", "Sent request: #{Base64.decode64(msg.request)}")
+			Log.log("Signal", "Sent request: #{msg.request}")
 		end
 		Log.log("Signal", "WARNING: Thread is exiting, should not happen!")
 	end
@@ -97,7 +100,7 @@ module Signal
 	def self.addRequest(req)
 		if( @@requests.add?(req) != nil )
 			# TODO: CHANGE THE TTLS BELOW TO ADD ANONYMITY
-			@@toSend << DataRequest.new(Base64.encode64(req), 5, 5)
+			@@toSend << DataRequest.new(req, 5, 5)
 		end
 		Log.log("Signal", "Added request for #{req}")
 	end
@@ -107,7 +110,7 @@ module Signal
 			Log.log("Signal", "Dropping request for #{req}")
 			return
 		end
-		@@toSend << DataRequest.new(Base64.encode64(req), orig_ttl.to_i, current_ttl.to_i - 1)
+		@@toSend << DataRequest.new(req, orig_ttl.to_i, current_ttl.to_i - 1)
 		Log.log("Signal", "Forwarding request for #{req} (TTL #{current_ttl})")
 	end
 
@@ -116,8 +119,8 @@ module Signal
 			Log.log("Signal", "Dropping response for #{topic} with file #{filename}")
 			return
 		end
-		eTopic = Base64.encode64(topic)
-		eName = Base64.encode64(filename)
+		eTopic = topic
+		eName = filename
 		@@toSend << DataResponse.new(eTopic, eName, data, ttl.to_i-1)
 		Log.log("Signal", "Forwarding response for #{topic} with file #{filename} (TTL #{ttl})")
 	end

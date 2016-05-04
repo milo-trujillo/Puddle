@@ -20,7 +20,9 @@ get '/relay/:ttlOrig/:ttlCurrent/:topic' do |orig_ttl, current_ttl, topic|
 	files = Storage.findFiles(topic)
 	for file in files
 		# TODO: Change this so we *don't* read the whole file into RAM
-		Signal.forwardResponse(topic, file, File.read(file), orig_ttl.to_i + 1)
+		name = File.basename(file)
+		data = File.read(file)
+		Signal.forwardResponse(topic, name, data, orig_ttl.to_i + 1)
 	end
 end
 
@@ -28,8 +30,10 @@ end
 # Make sure data isn't too rediculously large
 put '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
 	topic = Base64.decode64(CGI.unescape(topic))
+	filename = Base64.decode64(CGI.unescape(filename))
 	Log.log("Relay", "Received data response on #{topic} from #{request.ip}")
-	data = request.body.read # Fancy schmancy way of reading PUT request
+	# We use request.body.read to pull out the contents of the PUT
+	data = Base64.decode64(CGI.unescape(request.body.read))
 	Signal.forwardResponse(topic, filename, data, ttl.to_i)
 	if( Signal.isActiveRequest?(topic) )
 		Storage.storeFile(filename, data)
