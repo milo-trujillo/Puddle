@@ -5,6 +5,7 @@
 =end
 
 require 'base64'
+require 'cgi'
 
 require_relative 'storage'
 require_relative 'signal'
@@ -13,7 +14,7 @@ require_relative 'log'
 
 # TODO: Validate that the TTLs are integers and that the topic makes sense
 get '/relay/:ttlOrig/:ttlCurrent/:topic' do |orig_ttl, current_ttl, topic|
-	topic = Base64.decode64(topic)
+	topic = Base64.decode64(CGI.unescape(topic))
 	Log.log("Relay", "Received a topic request on #{topic} from #{request.ip}")
 	Signal.forwardRequest(topic, orig_ttl, current_ttl)
 	files = Storage.findFiles(topic)
@@ -26,6 +27,7 @@ end
 # TODO: Validate ttl, topic, filename, and data
 # Make sure data isn't too rediculously large
 put '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
+	topic = Base64.decode64(CGI.unescape(topic))
 	Log.log("Relay", "Received data response on #{topic} from #{request.ip}")
 	data = request.body.read # Fancy schmancy way of reading PUT request
 	Signal.forwardResponse(topic, filename, data, ttl)
