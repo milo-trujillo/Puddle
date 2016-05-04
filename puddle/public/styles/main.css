@@ -118,6 +118,10 @@ table, th, td {
 	border-collapse: collapse;
 }
 
+.log {
+	overflow: auto;
+}
+
 th {
 	padding-left: 5px;
 	padding-right: 5px;
