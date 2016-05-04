@@ -31,12 +31,13 @@ end
 put '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
 	topic = Base64.decode64(CGI.unescape(topic))
 	filename = Base64.decode64(CGI.unescape(filename))
-	Log.log("Relay", "Received data response on #{topic} from #{request.ip}")
+	Log.log("Relay", "Received data response on #{topic} with #{filename} from #{request.ip}")
 	# We use request.body.read to pull out the contents of the PUT
 	data = Base64.decode64(CGI.unescape(request.body.read))
 	Signal.forwardResponse(topic, filename, data, ttl.to_i)
 	if( Signal.isActiveRequest?(topic) )
 		Storage.storeFile(filename, data)
+		Log.log("Storage", "Saved file #{filename}")
 	else
 		#Storage.cacheFile(filename, data)
 	end
