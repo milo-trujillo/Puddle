@@ -16,11 +16,11 @@ require_relative 'log'
 get '/relay/:ttlOrig/:ttlCurrent/:topic' do |orig_ttl, current_ttl, topic|
 	topic = Base64.decode64(CGI.unescape(topic))
 	Log.log("Relay", "Received a topic request on #{topic} from #{request.ip}")
-	Signal.forwardRequest(topic, orig_ttl, current_ttl)
+	Signal.forwardRequest(topic, orig_ttl.to_i, current_ttl.to_i)
 	files = Storage.findFiles(topic)
 	for file in files
 		# TODO: Change this so we *don't* read the whole file into RAM
-		Signal.forwardResponse(topic, file, File.read(file), orig_ttl + 1)
+		Signal.forwardResponse(topic, file, File.read(file), orig_ttl.to_i + 1)
 	end
 end
 
@@ -30,8 +30,10 @@ put '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
 	topic = Base64.decode64(CGI.unescape(topic))
 	Log.log("Relay", "Received data response on #{topic} from #{request.ip}")
 	data = request.body.read # Fancy schmancy way of reading PUT request
-	Signal.forwardResponse(topic, filename, data, ttl)
+	Signal.forwardResponse(topic, filename, data, ttl.to_i)
 	if( Signal.isActiveRequest?(topic) )
 		Storage.storeFile(filename, data)
+	else
+		#Storage.cacheFile(filename, data)
 	end
 end
