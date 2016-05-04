@@ -108,7 +108,7 @@ module Signal
 			return
 		end
 		@@toSend << DataRequest.new(Base64.encode64(req), orig_ttl.to_i, current_ttl.to_i - 1)
-		Log.log("Signal", "Forwarding request for #{req}")
+		Log.log("Signal", "Forwarding request for #{req} (TTL #{current_ttl})")
 	end
 
 	def self.forwardResponse(topic, filename, data, ttl)
@@ -119,7 +119,7 @@ module Signal
 		eTopic = Base64.encode64(topic)
 		eName = Base64.encode64(filename)
 		@@toSend << DataResponse.new(eTopic, eName, data, ttl.to_i-1)
-		Log.log("Signal", "Forwarding response for #{topic} with file #{filename}")
+		Log.log("Signal", "Forwarding response for #{topic} with file #{filename} (TTL #{ttl})")
 	end
 
 	def self.addPeer(address)
