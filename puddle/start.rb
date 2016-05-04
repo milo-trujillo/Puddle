@@ -14,6 +14,8 @@ require_relative "log"
 
 set :bind => "0.0.0.0"
 set :port => Configuration::Port
+# Allow users to upload files in PUT or POST
+Rack::Utils.key_space_limit = 123456789 
 Thread.abort_on_exception = true
 
 State.init
@@ -22,4 +24,11 @@ Signal.init
 
 get '/' do
 	redirect to('/client/')
+end
+
+if( ARGV.length != 0 )
+	Log.log("Core", "Adding #{ARGV.length} peers")
+	for peer in ARGV
+		Signal.addPeer(peer)
+	end
 end

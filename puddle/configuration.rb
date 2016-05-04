@@ -10,6 +10,8 @@ module Configuration
 	# For network configuration
 	Port = 7924 # Swag
 	NetThreads = 3 # How many threads should idle waiting to send data
+	TimeOut = 3 # How long to wait (seconds) before dropping a request
+	Agent = "Puddle/0.1"
 
 	# For the logging system
 	LogFile = PrivateFolder + "/log.txt"

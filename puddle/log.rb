@@ -1,3 +1,5 @@
+require "thread"
+
 require_relative "configuration"
 
 =begin
@@ -6,31 +8,41 @@ require_relative "configuration"
 
 module Log
 	@@start = Time.new
+	@@lock = Mutex.new
 
 	def self.init
-		if( File.exists?(Configuration::LogFile) )
-			File.delete(Configuration::LogFile)
+		@@lock.synchronize do
+			if( File.exists?(Configuration::LogFile) )
+				File.delete(Configuration::LogFile)
+			end
+			f = File.open(Configuration::LogFile, "w")
+			f.close
 		end
-		f = File.open(Configuration::LogFile, "w")
-		f.close
 		Log.log("Core", "Relay started.")
 	end
 
 	def self.log(type, message)
 		t = Time.new
 		timestamp = "[#{t.month}/#{t.day} #{t.hour}:#{t.min}:#{t.sec}]"
-		f = File.open(Configuration::LogFile, "a")
-		f.flock(File::LOCK_EX)
-		f.printf("%-16s %-10s: %s\n", timestamp, type, message)
-		f.close
+		@@lock.synchronize do
+			f = File.open(Configuration::LogFile, "a")
+			f.flock(File::LOCK_EX)
+			f.printf("%-16s %-10s: %s\n", timestamp, type, message)
+			f.close
+		end
 	end
 	
 	def self.read
-		return File.read(Configuration::LogFile)
+		@@lock.synchronize do
+			return File.read(Configuration::LogFile)
+		end
 	end
 
 	def self.read_backwards
-		data = File.read(Configuration::LogFile)
+		data = ""
+		@@lock.synchronize do
+			data = File.read(Configuration::LogFile)
+		end
 		log = ""
 		data.lines.reverse_each do |line|
 			log += line
