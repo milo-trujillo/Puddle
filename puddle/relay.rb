@@ -39,6 +39,6 @@ put '/relay/:ttl/:topic/:filename' do |ttl, topic, filename|
 		Storage.storeFile(filename, data)
 		Log.log("Storage", "Saved file #{filename}")
 	else
-		#Storage.cacheFile(filename, data)
+		Storage.cacheFile(filename, data)
 	end
 end
